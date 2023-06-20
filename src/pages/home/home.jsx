@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axiosInstance from "../axios";
+import axiosInstance from "../../axios";
 import styles from "./home.module.css"
 
 export default function Home() {
@@ -21,16 +21,7 @@ export default function Home() {
 
   useEffect(() => {
     document.title = "to-do-mern-app - Home";
-    getTasks()
-      .then((result) => {
-        console.log(result);
-        setTasks(result.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
+    tarefas(getTasks, setTasks, setLoading);
   }, []);
 
   const handleSubmit = async (e) => {
@@ -38,8 +29,8 @@ export default function Home() {
     setLoading(true);
     const result = await createTask({task, description, priority});
     if (result.status === 201) {
-      setTasks(result.data);
       setCreateOption(false);
+      tarefas(getTasks, setTasks, setLoading);
     } else {
       alert(result);
     }
@@ -49,6 +40,10 @@ export default function Home() {
   const handleCreateOption = async (e) => {
     e.preventDefault();
     setCreateOption(true);
+  };
+
+  const deleteTask = async (id) => {
+    return await axiosInstance.delete(`/task/${id}`);
   };
 
   return (
@@ -67,17 +62,18 @@ export default function Home() {
                     <p className="description">{task.description}</p>
                     <p className="priority">{task.priority}</p>
                     <p className="status">{task.status}</p>
+                    <button onClick={deleteTask(task._id)}>Delete task</button>
                   </div>
                 ))
               ) : (
                 <>
                   <p>No tasks</p>
-                  <button hidden={createOption} onClick={handleCreateOption}>
-                    Create one!
-                  </button>
                 </>
               )}
             </div>
+            <button hidden={createOption} onClick={handleCreateOption}>
+              Create new task
+            </button>
             <div className="create" hidden={!createOption}>
               <form>
                 <label>
@@ -122,3 +118,16 @@ export default function Home() {
     </>
   );
 }
+function tarefas(getTasks, setTasks, setLoading) {
+  getTasks()
+    .then((result) => {
+      console.log(result);
+      setTasks(result.data);
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.log(err);
+      setLoading(false);
+    });
+}
+
