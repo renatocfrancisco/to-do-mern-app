@@ -29,10 +29,6 @@ export const updateTask = async (id, data) => {
     return await axiosInstance.put(`/task/${id}`, data);
 }
 
-export const deleteTask = async (id) => {
-    return await axiosInstance.delete(`/task/${id}`);
-}
-
 export const createUser = async (data) => {
     return await axiosInstance.post("/user", data);
 }
