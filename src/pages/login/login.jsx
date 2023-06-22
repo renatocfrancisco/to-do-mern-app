@@ -1,65 +1,75 @@
-import { login, setRefreshToken, setToken } from "../../api";
-import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import "../../App.css";
+import { login, setRefreshToken, setToken } from '../../api'
+import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
+import '../../App.css'
+import BarSpinner from '../../components/spinner'
+import styles from './login.module.css'
 
-export default function Login() {
-  const userRef = useRef();
-  const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+export default function Login () {
+  const userRef = useRef()
+  const navigate = useNavigate()
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const result = await login(username, password);
+    e.preventDefault()
+    setLoading(true)
+    const result = await login(username, password)
     if (result.status === 200) {
-      setRefreshToken(result.data.refreshToken);
-      setToken(result.data.accessToken);
-      navigate("/home");
+      setToken(result.data.accessToken)
+      setRefreshToken(result.data.refreshToken)
+      navigate('/home')
     } else {
-      alert(result);
+      alert(result)
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   useEffect(() => {
-    userRef.current.focus();
-  }, []);
-
-  useEffect(() => {
-    console.log("loading", loading);
-  }, [loading]);
+    userRef.current.focus()
+  }, [])
 
   return (
     <>
-      <div className="login">
+      <div className={styles.login}>
         <h1>LOGIN</h1>
         <form>
-          <label>
+          <label className={styles.label}>
             <p>Username</p>
             <input
               type="text"
+              className={styles.input}
+              disabled={loading}
               autoComplete="username"
               onChange={(e) => setUsername(e.target.value)}
               ref={userRef}
             />
           </label>
-          <label>
+          <label className={styles.label}>
             <p>Password</p>
             <input
               type="password"
+              className={styles.input}
+              disabled={loading}
               autoComplete="current-password"
               onChange={(e) => setPassword(e.target.value)}
             />
           </label>
 
-          <div className="submit">
-            <button onClick={handleSubmit}>Submit</button>
-          </div>
+          {loading
+            ? (
+            <div>
+              <BarSpinner />
+            </div>
+              )
+            : (
+            <div className={styles.submitButton}>
+              <button onClick={handleSubmit}>Submit</button>
+            </div>
+              )}
         </form>
       </div>
     </>
-  );
+  )
 }
