@@ -1,78 +1,108 @@
-import { useState, useEffect } from "react";
-import axiosInstance from "../../axios";
-import styles from "./home.module.css"
+import { useState, useEffect, useRef } from 'react'
+import styles from './home.module.css'
+import { createTask, getTasks, deleteTask, logout } from '../../api'
+import { useNavigate } from 'react-router-dom'
+import BarSpinner from '../../components/spinner'
 
-export default function Home() {
-  const [loading, setLoading] = useState(true);
-  const [tasks, setTasks] = useState([]);
-  const [createOption, setCreateOption] = useState(false);
-  const [task, setTaskName] = useState("");
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState("");
-
-  const getTasks = async () => {
-    return await axiosInstance.get("/task");
-  };
-
-  const createTask = async (data) => {
-    console.log(data)
-    return await axiosInstance.post("/task", data);
-  };
+export default function Home () {
+  const taskNameRef = useRef()
+  const [loading, setLoading] = useState(true)
+  const [tasks, setTasks] = useState([])
+  const [createOption, setCreateOption] = useState(false)
+  const [task, setTaskName] = useState('')
+  const [description, setDescription] = useState('')
+  const [priority, setPriority] = useState('')
+  const navigate = useNavigate()
 
   useEffect(() => {
-    document.title = "to-do-mern-app - Home";
-    tarefas(getTasks, setTasks, setLoading);
-  }, []);
+    document.title = 'to-do-mern-app - Home'
+    inicio(getTasks, setTasks, setLoading)
+  }, [])
+
+  useEffect(() => {
+    if (createOption) {
+      taskNameRef.current.focus()
+    }
+  }, [createOption])
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const result = await createTask({task, description, priority});
+    e.preventDefault()
+    setLoading(true)
+    setCreateOption(false)
+    const result = await createTask({ task, description, priority })
     if (result.status === 201) {
-      setCreateOption(false);
-      tarefas(getTasks, setTasks, setLoading);
-    } else {
-      alert(result);
+      limparInputs(setTaskName, setDescription, setPriority)
+      tasks.push(result.data.task)
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
+
+  const handleDelete = async (e) => {
+    e.preventDefault()
+    const id = e.target.value
+    setLoading(true)
+    const result = await deleteTask(id)
+    if (result.status === 200) {
+      tasks.splice(tasks.findIndex((arrayTask) => arrayTask._id === id), 1)
+    }
+    setLoading(false)
+  }
 
   const handleCreateOption = async (e) => {
-    e.preventDefault();
-    setCreateOption(true);
-  };
+    e.preventDefault()
+    if (!createOption) {
+      limparInputs(setTaskName, setDescription, setPriority)
+    }
+    setCreateOption(!createOption)
+  }
 
-  const deleteTask = async (id) => {
-    return await axiosInstance.delete(`/task/${id}`);
-  };
+  const handleLogout = async (e) => {
+    e.preventDefault()
+    await logout()
+    navigate('/')
+  }
 
   return (
     <>
-      <div className="home">
+      <div className={styles.home}>
         <h1>HOME</h1>
-        {loading ? (
-          <div>Loading...</div>
-        ) : (
+        {loading
+          ? (
+          <><BarSpinner /><div>Loading...</div></>
+            )
+          : (
           <>
+            <div className={styles.header}>
+              <button hidden={createOption} onClick={handleCreateOption}>
+                {tasks.length > 0 ? 'Create new task' : 'Create one!'}
+              </button>
+              <button onClick={handleLogout}> Logout</button>
+            </div>
             <div className={styles.tasks}>
-              {tasks.length > 0 ? (
-                tasks.map((task, index) => (
-                  <div className={styles.task} key={index}>
-                    <p className="title">{task.task}</p>
-                    <p className="description">{task.description}</p>
-                    <p className="priority">{task.priority}</p>
-                    <p className="status">{task.status}</p>
-                    <button onClick={deleteTask(task._id)}>Delete task</button>
-                  </div>
-                ))
-              ) : (
+              {tasks.length > 0
+                ? (
+                    tasks.map((task, index) => (
+                      <div className={styles.task} key={index}>
+                        <p className={styles.taskName}>{task.task}</p>
+                        <div className={styles.actions}>
+                          <button className={styles.editButton}>
+                            Edit
+                          </button>
+                          <button className={styles.deleteButton} onClick={handleDelete} value={task._id}>
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )
+                : (
                 <>
                   <p>No tasks</p>
                 </>
-              )}
+                  )}
             </div>
-            <button hidden={createOption} onClick={handleCreateOption}>
-              Create new task
+            <button hidden={!createOption} onClick={handleCreateOption}>
+              Cancel
             </button>
             <div className="create" hidden={!createOption}>
               <form>
@@ -81,6 +111,7 @@ export default function Home() {
                   <input
                     type="text"
                     autoComplete="task"
+                    ref={taskNameRef}
                     onChange={(e) => setTaskName(e.target.value)}
                   />
                 </label>
@@ -96,7 +127,7 @@ export default function Home() {
                 <label>
                   <p>Priority</p>
                   <select
-                    onSelect={(e) => setPriority(e.target.value)}
+                    onChange={(e) => setPriority(e.target.value)}
                     id="priority"
                   >
                     <option value="Low">Low</option>
@@ -113,21 +144,27 @@ export default function Home() {
               </form>
             </div>
           </>
-        )}
+            )}
       </div>
     </>
-  );
+  )
 }
-function tarefas(getTasks, setTasks, setLoading) {
-  getTasks()
-    .then((result) => {
-      console.log(result);
-      setTasks(result.data);
-      setLoading(false);
-    })
-    .catch((err) => {
-      console.log(err);
-      setLoading(false);
-    });
+function limparInputs (setTaskName, setDescription, setPriority) {
+  setTaskName('')
+  setDescription('')
+  setPriority('')
 }
 
+function inicio (getTasks, setTasks, setLoading) {
+  setLoading(true)
+  getTasks()
+    .then((result) => {
+      setTasks(result.data)
+    })
+    .catch((_err) => {
+      setTasks([])
+    })
+    .finally(() => {
+      setLoading(false)
+    })
+}
