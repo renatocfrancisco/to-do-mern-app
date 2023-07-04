@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import styles from './home.module.css'
 import { createTask, getTasks, deleteTask, logout, updateTask } from '../../api'
 import { useNavigate } from 'react-router-dom'
-import BarSpinner from '../../components/spinner'
+import BarSpinner from '../../assets/spinner'
 
 export default function Home () {
   const taskNameRef = useRef()
@@ -89,8 +89,7 @@ export default function Home () {
                 ? (
                     tasks.map((task, index) => (
                       <div className={styles.task} key={index}>
-                        <p hidden={editNameOption} className={styles.taskName}>{task.task}</p>
-                        <input hidden={!editNameOption} type="text" defaultValue={task.task} />
+                        <p className={styles.taskName}>{task.task}</p>
                         <div className={styles.actions}>
                           <select defaultValue={task.priority} data-id={task._id} data-type="priority" onChange={handleUpdate}>
                             <option value="Low">Low</option>

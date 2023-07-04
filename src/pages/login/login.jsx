@@ -2,7 +2,7 @@ import { login, setRefreshToken, setToken } from '../../api'
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../../App.css'
-import BarSpinner from '../../components/spinner'
+import BarSpinner from '../../assets/spinner'
 import styles from './login.module.css'
 
 export default function Login () {
