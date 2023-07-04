@@ -2,12 +2,20 @@
   "name": "to-do-mern-app",
   "private": true,
   "version": "1.0.0",
+  "author": "renatocfrancisco",
   "license": "Unlicense",
+  "keywords": [
+    "to-do",
+    "mern",
+    "app",
+    "react",
+    "vite"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0 --fix",
     "preview": "vite preview"
   },
   "dependencies": {
