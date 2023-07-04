@@ -61,13 +61,14 @@ export default function Home () {
     setLoading(false)
   }
 
-  const handleDelete = async (e) => {
+  const handleDelete = async (e, index) => {
     e.preventDefault()
-    const id = e.target.value
     setLoading(true)
-    const result = await deleteTask(id)
-    if (result.status === 200) {
-      tasks.splice(tasks.findIndex((arrayTask) => arrayTask._id === id), 1)
+    if(tasks[index]._id){
+      const result = await deleteTask(tasks[index]._id)
+      if (result.status === 200) {
+        tasks.splice(index, 1)
+      }
     }
     setLoading(false)
   }
@@ -86,11 +87,13 @@ export default function Home () {
     navigate('/')
   }
 
-  const handleUpdate = async (e) => {
+  const handleUpdate = async (e, index) => {
     e.preventDefault()
+    setLoading(true)
     const data = { [e.target.getAttribute('data-type')]: e.target.value }
-    await updateTask(e.target.getAttribute('data-id'), data)
-    inicio(getTasks, setTasks, setLoading)
+    await updateTask(tasks[index]._id, data)
+    tasks.find((arrayTask) => arrayTask._id === tasks[index]._id)[e.target.getAttribute('data-type')] = e.target.value
+    setLoading(false)
   }
 
   return (
@@ -119,21 +122,21 @@ export default function Home () {
                         </div>
                         <p className={styles.taskName}>{task.task}</p>
                         <div className={styles.actions}>
-                          <select defaultValue={task.priority} data-id={task._id} data-type="priority" onChange={handleUpdate}>
+                          <select defaultValue={task.priority} data-type="priority" onChange={(e) => handleUpdate(e, index)}>
                             <option value="Low">Low</option>
                             <option value="Medium">Medium</option>
                             <option value="High">High</option>
                             <option value="Urgent">Urgent</option>
                             <option values="Critical">Critical</option>
                           </select>
-                          <select defaultValue={task.status} data-id={task._id} data-type="status" onChange={handleUpdate}>
+                          <select defaultValue={task.status} data-type="status" onChange={(e) => handleUpdate(e, index)}>
                             <option value="Pending">Pending</option>
                             <option value="In Progress">In Progress</option>
                             <option value="Completed">Completed</option>
                             <option value="On Hold">On Hold</option>
                             <option value="Cancelled">Cancelled</option>
                           </select>
-                          <button className={styles.deleteButton} onClick={handleDelete} value={task._id}>
+                          <button className={styles.deleteButton} onClick={(e) => handleDelete(e,index)}>
                             Delete <BiTrash />
                           </button>
                         </div>
