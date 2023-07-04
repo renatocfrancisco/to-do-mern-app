@@ -2,7 +2,16 @@ import { useState, useEffect, useRef } from 'react'
 import styles from './home.module.css'
 import { createTask, getTasks, deleteTask, logout, updateTask } from '../../api'
 import { useNavigate } from 'react-router-dom'
-import BarSpinner from '../../assets/spinner'
+
+import BarSpinner from '../../assets/loading'
+import BiTrash from '../../assets/delete'
+import BiBoxArrowInRight from '../../assets/logout'
+import BiPlusCircle from '../../assets/create'
+import BiClockHistory from '../../assets/pending'
+import BiCheckLg from '../../assets/completed'
+import BiExclamationCircle from '../../assets/progress'
+import BiPauseCircle from '../../assets/onhold'
+import BiXCircle from '../../assets/cancelled'
 
 export default function Home () {
   const taskNameRef = useRef()
@@ -10,9 +19,24 @@ export default function Home () {
   const [tasks, setTasks] = useState([])
   const [createOption, setCreateOption] = useState(false)
   const [task, setTaskName] = useState('')
-  const [description, setDescription] = useState('')
   const [priority, setPriority] = useState('')
   const navigate = useNavigate()
+
+  const svgOption = useState({
+    "Pending": <BiClockHistory />,
+    "In Progress": <BiExclamationCircle />,
+    "Completed": <BiCheckLg />,
+    "On Hold": <BiPauseCircle />,
+    "Cancelled": <BiXCircle />
+  })
+
+  const colorOption = useState({
+    'Low': '#00ff00',
+    'Medium': '#ffff00',
+    'High': '#ff9900',
+    'Urgent': '#ff0000',
+    'Critical': '#ff46f6'
+  })
 
   useEffect(() => {
     document.title = 'to-do-mern-app - Home'
@@ -31,7 +55,7 @@ export default function Home () {
     setCreateOption(false)
     const result = await createTask({ task, description, priority })
     if (result.status === 201) {
-      limparInputs(setTaskName, setDescription, setPriority)
+      limparInputs(setTaskName, setPriority)
       tasks.push(result.data.task)
     }
     setLoading(false)
@@ -51,7 +75,7 @@ export default function Home () {
   const handleCreateOption = async (e) => {
     e.preventDefault()
     if (!createOption) {
-      limparInputs(setTaskName, setDescription, setPriority)
+      limparInputs(setTaskName, setPriority)
     }
     setCreateOption(!createOption)
   }
@@ -66,6 +90,7 @@ export default function Home () {
     e.preventDefault()
     let data = {[e.target.getAttribute('data-type')]: e.target.value}
     await updateTask(e.target.getAttribute('data-id'), data)
+    inicio(getTasks, setTasks, setLoading)
   }
 
   return (
@@ -80,9 +105,9 @@ export default function Home () {
           <>
             <div className={styles.header}>
               <button hidden={createOption} onClick={handleCreateOption}>
-                {tasks.length > 0 ? 'Create new task' : 'Create one!'}
+                {tasks.length > 0 ? 'Create new task' : 'Create one!'} <BiPlusCircle />
               </button>
-              <button onClick={handleLogout}> Logout</button>
+              <button className={styles.logout} onClick={handleLogout}> Logout <BiBoxArrowInRight/></button>
             </div>
             <div className={styles.tasks}>
               {tasks.length > 0
@@ -90,6 +115,9 @@ export default function Home () {
                     tasks.map((task, index) => (
                       <div className={styles.task} key={index}>
                         <p className={styles.taskName}>{task.task}</p>
+                        <div className={styles.statusIcon} style={{'color': `${colorOption[0][task.priority]}`}}>
+                          {svgOption[0][task.status]}
+                        </div>
                         <div className={styles.actions}>
                           <select defaultValue={task.priority} data-id={task._id} data-type="priority" onChange={handleUpdate}>
                             <option value="Low">Low</option>
@@ -106,7 +134,7 @@ export default function Home () {
                             <option value="Cancelled">Cancelled</option>
                           </select>
                           <button className={styles.deleteButton} onClick={handleDelete} value={task._id}>
-                            Delete
+                            Delete <BiTrash />
                           </button>
                         </div>
                       </div>
@@ -133,15 +161,6 @@ export default function Home () {
                   />
                 </label>
                 <label>
-                  <p>Description</p>
-                  <textarea
-                    id="description"
-                    onChange={(e) => setDescription(e.target.value)}
-                    cols="30"
-                    rows="5"
-                  ></textarea>
-                </label>
-                <label>
                   <p>Priority</p>
                   <select
                     onChange={(e) => setPriority(e.target.value)}
@@ -166,9 +185,8 @@ export default function Home () {
     </>
   )
 }
-function limparInputs (setTaskName, setDescription, setPriority) {
+function limparInputs (setTaskName, setPriority) {
   setTaskName('')
-  setDescription('')
   setPriority('')
 }
 
