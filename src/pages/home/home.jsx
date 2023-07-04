@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import styles from './home.module.css'
-import { createTask, getTasks, deleteTask, logout } from '../../api'
+import { createTask, getTasks, deleteTask, logout, updateTask } from '../../api'
 import { useNavigate } from 'react-router-dom'
 import BarSpinner from '../../components/spinner'
 
@@ -62,6 +62,12 @@ export default function Home () {
     navigate('/')
   }
 
+  const handleUpdate = async (e) => {
+    e.preventDefault()
+    let data = {[e.target.getAttribute('data-type')]: e.target.value}
+    await updateTask(e.target.getAttribute('data-id'), data)
+  }
+
   return (
     <>
       <div className={styles.home}>
@@ -83,11 +89,23 @@ export default function Home () {
                 ? (
                     tasks.map((task, index) => (
                       <div className={styles.task} key={index}>
-                        <p className={styles.taskName}>{task.task}</p>
+                        <p hidden={editNameOption} className={styles.taskName}>{task.task}</p>
+                        <input hidden={!editNameOption} type="text" defaultValue={task.task} />
                         <div className={styles.actions}>
-                          <button className={styles.editButton}>
-                            Edit
-                          </button>
+                          <select defaultValue={task.priority} data-id={task._id} data-type="priority" onChange={handleUpdate}>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="Urgent">Urgent</option>
+                            <option values="Critical">Critical</option>
+                          </select>
+                          <select defaultValue={task.status} data-id={task._id} data-type="status" onChange={handleUpdate}>
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                            <option value="On Hold">On Hold</option>
+                            <option value="Cancelled">Cancelled</option>
+                          </select>
                           <button className={styles.deleteButton} onClick={handleDelete} value={task._id}>
                             Delete
                           </button>
