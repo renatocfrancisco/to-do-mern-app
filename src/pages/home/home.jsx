@@ -23,19 +23,19 @@ export default function Home () {
   const navigate = useNavigate()
 
   const svgOption = useState({
-    "Pending": <BiClockHistory />,
-    "In Progress": <BiExclamationCircle />,
-    "Completed": <BiCheckLg />,
-    "On Hold": <BiPauseCircle />,
-    "Cancelled": <BiXCircle />
+    Pending: <BiClockHistory />,
+    'In Progress': <BiExclamationCircle />,
+    Completed: <BiCheckLg />,
+    'On Hold': <BiPauseCircle />,
+    Cancelled: <BiXCircle />
   })
 
   const colorOption = useState({
-    'Low': '#00ff00',
-    'Medium': '#ffff00',
-    'High': '#ff9900',
-    'Urgent': '#ff0000',
-    'Critical': '#ff46f6'
+    Low: '#00ff00',
+    Medium: '#ffff00',
+    High: '#f5a937',
+    Urgent: '#ff4040',
+    Critical: '#ff56f7'
   })
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function Home () {
     e.preventDefault()
     setLoading(true)
     setCreateOption(false)
-    const result = await createTask({ task, description, priority })
+    const result = await createTask({ task, priority })
     if (result.status === 201) {
       limparInputs(setTaskName, setPriority)
       tasks.push(result.data.task)
@@ -88,7 +88,7 @@ export default function Home () {
 
   const handleUpdate = async (e) => {
     e.preventDefault()
-    let data = {[e.target.getAttribute('data-type')]: e.target.value}
+    const data = { [e.target.getAttribute('data-type')]: e.target.value }
     await updateTask(e.target.getAttribute('data-id'), data)
     inicio(getTasks, setTasks, setLoading)
   }
@@ -114,10 +114,10 @@ export default function Home () {
                 ? (
                     tasks.map((task, index) => (
                       <div className={styles.task} key={index}>
-                        <p className={styles.taskName}>{task.task}</p>
-                        <div className={styles.statusIcon} style={{'color': `${colorOption[0][task.priority]}`}}>
+                        <div className={styles.statusIcon} style={{ color: `${colorOption[0][task.priority]}` }}>
                           {svgOption[0][task.status]}
                         </div>
+                        <p className={styles.taskName}>{task.task}</p>
                         <div className={styles.actions}>
                           <select defaultValue={task.priority} data-id={task._id} data-type="priority" onChange={handleUpdate}>
                             <option value="Low">Low</option>

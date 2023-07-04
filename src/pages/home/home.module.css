@@ -29,7 +29,7 @@
 }
 
 .task:last-child {
-    border-bottom: none; /* Remove the border on the last task item */
+    border-bottom: none;
 }
 
 .task:hover{
@@ -44,7 +44,7 @@
 
 .taskName {
     flex-grow: 1;
-    margin-right: 10px;
+    margin-right: 15px;
     text-align-last: start;
 }
 
