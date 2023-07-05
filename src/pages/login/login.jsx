@@ -27,6 +27,7 @@ export default function Login () {
   }
 
   useEffect(() => {
+    document.title = 'to-do-mern-app | Login'
     userRef.current.focus()
   }, [])
 

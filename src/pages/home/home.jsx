@@ -39,7 +39,7 @@ export default function Home () {
   })
 
   useEffect(() => {
-    document.title = 'to-do-mern-app - Home'
+    document.title = 'to-do-mern-app | Home'
     inicio(getTasks, setTasks, setLoading)
   }, [])
 
