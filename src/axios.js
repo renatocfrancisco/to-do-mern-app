@@ -1,5 +1,5 @@
 import axios from 'axios'
-import createAuthRefreshInterceptor from "axios-auth-refresh";
+import createAuthRefreshInterceptor from 'axios-auth-refresh'
 
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:3000',

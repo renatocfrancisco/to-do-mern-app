@@ -1,5 +1,6 @@
+import React, { useState, useEffect, useRef } from 'react'
 import { login, setRefreshToken, setToken } from '../../api'
-import { useState, useEffect, useRef } from 'react'
+
 import { useNavigate } from 'react-router-dom'
 import '../../App.css'
 import BarSpinner from '../../assets/loading'

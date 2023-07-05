@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styles from './home.module.css'
 import { createTask, getTasks, deleteTask, logout, updateTask } from '../../api'
 import { useNavigate } from 'react-router-dom'
@@ -64,7 +64,7 @@ export default function Home () {
   const handleDelete = async (e, index) => {
     e.preventDefault()
     setLoading(true)
-    if(tasks[index]._id){
+    if (tasks[index]._id) {
       const result = await deleteTask(tasks[index]._id)
       if (result.status === 200) {
         tasks.splice(index, 1)
@@ -136,7 +136,7 @@ export default function Home () {
                             <option value="On Hold">On Hold</option>
                             <option value="Cancelled">Cancelled</option>
                           </select>
-                          <button className={styles.deleteButton} onClick={(e) => handleDelete(e,index)}>
+                          <button className={styles.deleteButton} onClick={(e) => handleDelete(e, index)}>
                             Delete <BiTrash />
                           </button>
                         </div>
