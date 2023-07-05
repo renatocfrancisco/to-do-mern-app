@@ -106,13 +106,13 @@ export default function Home () {
             )
           : (
           <>
-            <div className={styles.header}>
+            <div className={styles.header} tabIndex={0}>
               <button hidden={createOption} onClick={handleCreateOption}>
                 {tasks.length > 0 ? 'Create new task' : 'Create one!'} <BiPlusCircle />
               </button>
               <button className={styles.logout} onClick={handleLogout}> Logout <BiBoxArrowInRight/></button>
             </div>
-            <div className={styles.tasks}>
+            <div className={styles.tasks} tabIndex={1}>
               {tasks.length > 0
                 ? (
                     tasks.map((task, index) => (
@@ -152,7 +152,7 @@ export default function Home () {
             <button hidden={!createOption} onClick={handleCreateOption}>
               Cancel
             </button>
-            <div className="create" hidden={!createOption}>
+            <div className="create" hidden={!createOption} tabIndex={2}>
               <form>
                 <label>
                   <p>Task</p>
