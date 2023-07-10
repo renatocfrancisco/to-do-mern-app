@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { login, setRefreshToken, setToken } from '../../api'
+import { login } from '../../api'
 
 import { useNavigate } from 'react-router-dom'
 import '../../App.css'
@@ -16,13 +16,8 @@ export default function Login () {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    const result = await login(username, password)
-    if (result.status === 200) {
-      setToken(result.data.accessToken)
-      setRefreshToken(result.data.refreshToken)
+    if (await login(username, password)) {
       navigate('/home')
-    } else {
-      alert(result)
     }
     setLoading(false)
   }

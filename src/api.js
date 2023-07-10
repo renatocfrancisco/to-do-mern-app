@@ -4,7 +4,16 @@ export const login = async (username, password) => {
   return await axiosInstance.post('/login', {
     username,
     password
-  })
+  }).then((response) => {
+    setToken(response.data.accessToken)
+    setRefreshToken(response.data.refreshToken)
+    return true
+  }
+  )
+    .catch((error) => {
+      alert(error.response.data)
+      return false
+    })
 }
 
 export const setToken = (token) => {
