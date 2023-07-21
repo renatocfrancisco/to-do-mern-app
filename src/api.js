@@ -31,18 +31,18 @@ export const logout = async () => {
 }
 
 export const getTasks = async () => {
-  return await axiosInstance.get('/task')
+  return await axiosInstance.get('/tasks')
 }
 
 export const createTask = async (data) => {
   console.log(data)
-  return await axiosInstance.post('/task', data)
+  return await axiosInstance.post('/tasks', data)
 }
 
 export const deleteTask = async (id) => {
-  return await axiosInstance.delete(`/task/${id}`)
+  return await axiosInstance.delete(`/tasks/${id}`)
 }
 
 export const updateTask = async (id, data) => {
-  return await axiosInstance.put(`/task/${id}`, data)
+  return await axiosInstance.put(`/tasks/${id}`, data)
 }
