@@ -9,3 +9,8 @@
 
 This project was generated with [vite](https://vitejs.dev/).
 A simple to-do app using MERN stack together with [to-do-mern-api](https://github.com/renatocfrancisco/to-do-mern-api).
+
+[Download zip file](https://github.com/renatocfrancisco/to-do-mern-app/archive/refs/heads/main.zip), get the [latest release](https://github.com/renatocfrancisco/to-do-mern-app/releases/latest) or execute:
+```
+git clone https://github.com/renatocfrancisco/to-do-mern-app
+```
